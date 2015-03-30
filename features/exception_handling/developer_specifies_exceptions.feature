@@ -46,3 +46,39 @@ Feature: Developer specifies exception behaviour
       """
     When I run phpspec
     Then the suite should pass
+
+  Scenario: Throwing an exception during static construction
+    Given the spec file "spec/Runner/ExceptionExample4/MarkdownSpec.php" contains:
+      """
+      <?php
+
+      namespace spec\Runner\ExceptionExample4;
+
+      use PhpSpec\ObjectBehavior;
+
+      class MarkdownSpec extends ObjectBehavior
+      {
+          function it_throws_an_exception_during_initialization()
+          {
+              $this->beConstructedThrough('createForWriting', []);
+          }
+      }
+
+      """
+    And the class file "src/Runner/ExceptionExample4/Markdown.php" contains:
+      """
+      <?php
+
+      namespace Runner\ExceptionExample4;
+
+      class Markdown
+      {
+          public static function createForWriting()
+          {
+              throw new \Exception();
+          }
+      }
+
+      """
+    When I run phpspec
+    Then the suite should pass
